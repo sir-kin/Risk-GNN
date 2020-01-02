@@ -228,7 +228,7 @@ class Risk:
             num_territories_owned[i.owner] += 1
             
         for i in range(self.num_players):
-            if num_territories_owned[i] >= 32: # self.num_territories * 0.8
+            if num_territories_owned[i] >= self.num_territories * 0.7:
                 return i
         
         return None
@@ -385,7 +385,7 @@ class Risk:
         
         labels={i : str(self.territories[i].num_troops) for i in g.nodes() }
             
-        nx.draw_kamada_kawai(g, labels=labels, nodelist=g.nodes(), node_color=node_colors,font_size=72, node_size=6000)
+        nx.draw_kamada_kawai(g, labels=labels, nodelist=g.nodes(), node_color=node_colors,font_size=56, node_size=4000)
 
 
 def get_attack_outcomes(r, src, dst, num_troops_atk, num_troops_def):
@@ -601,27 +601,35 @@ def get_move_list(r):
 
 
 
-def step(r, player, prob_random_move = 1.0):
+def step(r, player, prob_random_move = 1.0, model=None, animate=True):
+    
+    if model is None and prob_random_move != 1.0:
+        raise ValueError("Without a model, can only make 100% random moves.")
     
     results, flag = get_move_list(r)
     
     print(list(np.roll(r.get_num_territories_owned(), player)))
-    #print(list(np.roll(get_winning_chances(r, model), player)))
     
-    plt.clf()
-    r.draw_map(player)
-    plt.pause(0.001)
+
+    if model is not None:
+        print(list(np.roll(get_winning_chances(r, model), player)))
+    
+    if animate:
+        plt.clf()
+        r.draw_map(player)
+        plt.pause(0.001)
     
     if flag:
         print("END PLAYER {} TURN".format(player))
         player = (player + 1) % 3
         
         
-    """
-    choose a move at random
-    """
     if np.random.rand() < prob_random_move:
+        """
+        choose a move at random
+        """
         i = np.random.choice(range(len(results)))
+    
     
     else:
         """
@@ -641,7 +649,6 @@ def step(r, player, prob_random_move = 1.0):
     
     return r, player
     
-plt.show()
 
 from torch_geometric.data import Data
 import torch
@@ -700,10 +707,7 @@ def play_game(_=None):
         
         r, player = step(r, player)
         
-        #d = encode(r)
-        #out = model(d)
-        #out = list(out.detach().numpy().ravel())
-        #print(out)
+
     
     
     print("PLAYER {} WINS!".format(player))
@@ -737,7 +741,7 @@ if __name__ == '__main__':
 """
 
 board_list = []
-for i in range(1):
+for i in range(20):
     board_list += play_game()
 
 

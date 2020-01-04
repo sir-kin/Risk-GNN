@@ -19,12 +19,12 @@ class Net(torch.nn.Module):
     def __init__(self):
         super().__init__()
         
-        self.mlp1 = Seq(Lin(num_node_features + num_global_features, 32), ReLU() )
+        #self.mlp1 = Seq(Lin(num_node_features + num_global_features, 32), ReLU() )
         #self.mlp1 = Seq( MLP([num_node_features + num_global_features, 32]), MLP([32, 64]), MLP([64, 32]))
         #self.mlp2 = Seq( MLP([32, 32]), MLP([32, 64]), MLP([64, 32]))
         #self.mlpout = Seq( MLP([32, 64]), MLP([64, 32]), Lin(32, num_players))
         
-        self.conv1 = GCNConv(32, 32)
+        self.conv1 = GCNConv(num_node_features + num_global_features, 32)
         self.conv2 = GCNConv(32, 32)
         self.conv3 = GCNConv(32, num_players)
 
@@ -38,8 +38,8 @@ class Net(torch.nn.Module):
         #u = global feature vector
         #x = torch.cat([x, u], dim=1)
         
-        x = self.mlp1(x)
-        #u = global_mean_pool(x, batch)
+        #x = self.mlp1(x)
+        #u = global_add_pool(x, batch)
         
         #tmp = torch.ones((48,1))
         #u = torch.mm(tmp, u)
@@ -48,8 +48,8 @@ class Net(torch.nn.Module):
         x = self.conv1(x, edge_index)
         x = F.relu(x)
         
-        #x = self.conv2(x, edge_index)
-        #x = F.relu(x)
+        x = self.conv2(x, edge_index)
+        x = F.relu(x)
         
         #x = self.mlp2(x)
         

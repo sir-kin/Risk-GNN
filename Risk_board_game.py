@@ -741,7 +741,7 @@ if __name__ == '__main__':
 """
 
 board_list = []
-for i in range(20):
+for i in range(1):
     board_list += play_game()
 
 

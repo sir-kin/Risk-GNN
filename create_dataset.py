@@ -16,6 +16,8 @@ model.train()
 for epoch in range(20):
     
     for data in loader:
+        data = data.to(device)
+        
         optimizer.zero_grad()
         out = model(data)
         out = out.exp()
@@ -31,12 +33,14 @@ model.eval()
 
 for data in loader:
     
+    data = data.to(device)
     out = model(data)
+    out = out.cpu()
     
     
     for p,y in zip(out, data.y):
         #print(list(one_hot_encoding(y, 3)))
-        print(y)
+        print(y.cpu().detach().numpy().ravel())
         print(list(p.exp().detach().numpy().ravel()))
         print()
         break

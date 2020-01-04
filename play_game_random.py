@@ -77,13 +77,14 @@ def play_game(_=None):
 
 
 
+for i in range(100):
 
-board_list, winner_prediction_gt = play_game()
-
-game_idx = 0
-with open("saved_games/game_{}".format(game_idx), "wb") as f:
-    t = (board_list, winner_prediction_gt)
-    pickle.dump(t, f)
+    board_list, winner_prediction_gt = play_game()
+    
+    game_idx = np.random.randint(100000)
+    with open("saved_games/game_{}".format(game_idx), "wb") as f:
+        t = (board_list, winner_prediction_gt)
+        pickle.dump(t, f)
     
     
 

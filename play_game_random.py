@@ -1,4 +1,5 @@
 import numpy as np
+import pickle
 
 from Risk_board_game import Risk, get_move_list, one_hot_encoding
 
@@ -78,8 +79,13 @@ def play_game(_=None):
 
 
 board_list, winner_prediction_gt = play_game()
-    
 
+game_idx = 0
+with open("saved_games/game_{}".format(game_idx), "wb") as f:
+    t = (board_list, winner_prediction_gt)
+    pickle.dump(t, f)
+    
+    
 
 
 

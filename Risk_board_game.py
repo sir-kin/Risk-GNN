@@ -208,7 +208,7 @@ class Risk:
         return max(3, a)
     
     
-    def check_winner(self):
+    def check_winner(self, percentage=0.7):
         """
         simplified win condition:
             first to own 38 territories
@@ -228,7 +228,7 @@ class Risk:
             num_territories_owned[i.owner] += 1
             
         for i in range(self.num_players):
-            if num_territories_owned[i] >= self.num_territories * 0.7:
+            if num_territories_owned[i] >= self.num_territories * percentage:
                 return i
         
         return None
@@ -295,6 +295,8 @@ class Risk:
             # and move in all of the attackers who survived the attack
             t_dst.num_troops = (num_troops_atk - atk_casualties)
             t_dst.owner = t_src.owner
+            
+            t_src.num_troops -= (num_troops_atk - atk_casualties)
             
             # and set the flags so you have the option to move 
             # additional troops to the new territory

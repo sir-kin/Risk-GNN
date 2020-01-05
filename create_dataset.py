@@ -3,7 +3,15 @@ import torch
 from torch_geometric.data import Data, DataLoader
 from risk_gnn import Net
 
-data_list = board_list
+import pickle
+with open("dataset.p", "rb") as f:
+        data_list = pickle.load(f)
+        
+print("loaded dataset")
+
+#from load_games import data_list
+#data_list = board_list
+
 loader = DataLoader(data_list, batch_size=32, shuffle=True)
 
 
@@ -13,7 +21,8 @@ model = Net().to(device)
 optimizer = torch.optim.Adam(model.parameters(), lr=0.01, weight_decay=5e-4)
 
 model.train()
-for epoch in range(20):
+for epoch in range(50):
+    print("epoch {}".format(epoch))
     
     for data in loader:
         data = data.to(device)
@@ -43,7 +52,8 @@ for data in loader:
         print(y.cpu().detach().numpy().ravel())
         print(list(p.exp().detach().numpy().ravel()))
         print()
-        break
+    
+    break
 
 
 

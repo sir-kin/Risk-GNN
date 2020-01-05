@@ -1,10 +1,10 @@
 import numpy as np
 from matplotlib import pyplot as plt
 
-from Risk_board_game import Risk, get_move_list
+from Risk_board_game import Risk, get_move_list, one_hot_encoding
 
 
-def step(r, player, prob_random_move = 1.0, model=None, animate=True):
+def step(r, player, prob_random_move = 0.33, model=None, animate=True):
     
     if model is None and prob_random_move != 1.0:
         raise ValueError("Without a model, can only make 100% random moves.")
@@ -97,18 +97,18 @@ def get_winning_chances_stochastic(outcomes, model):
     
 
 
-def play_game(_=None):
+def play_game(_=None, model=None):
     player = 0
     
     r = Risk()
     
     board_list = []
     player_turn_list = []
-    while r.check_winner() is None:
+    while r.check_winner(percentage=0.8) is None:
         board_list.append(encode(r))
         player_turn_list.append(player)
         
-        r, player = step(r, player)
+        r, player = step(r, player, model=model)
         
 
     
@@ -128,24 +128,17 @@ def play_game(_=None):
     return board_list
 
 
+model_cpu = model.to(torch.device('cpu'))
 
 
-#board_list = play_game()
+results = []
+for i in range(5):
+    t = play_game(model=model_cpu)
+    results.append(t)
 
-"""
-from multiprocessing import Pool
-p = Pool(1)
 
-if __name__ == '__main__':
 
-    board_list = []
-    for i in p.map(play_game, range(1)):
-        board_list += i
-"""
 
-board_list = []
-for i in range(1):
-    board_list += play_game()
 
 
 

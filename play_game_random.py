@@ -1,3 +1,10 @@
+"""
+a stripped down version of `play_game.py`,
+specifically for the purpose of being able to rapidly play many games via `pypy`.
+Without a model, ie when all moves are 100% random, pytorch is no longer a dependency.
+Without animations, matplotlib is no logner a dependency.
+"""
+
 import numpy as np
 import pickle
 

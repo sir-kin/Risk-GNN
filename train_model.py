@@ -3,28 +3,29 @@ import torch
 from torch_geometric.data import Data, DataLoader
 from risk_gnn import Net
 
+import progressbar
+
 import pickle
-with open("dataset.p", "rb") as f:
+with open("dataset2.p", "rb") as f:
         data_list = pickle.load(f)
         
 print("loaded dataset")
 
-#from load_games import data_list
-#data_list = board_list
-
-loader = DataLoader(data_list, batch_size=32, shuffle=True)
+loader = DataLoader(data_list, batch_size=128, shuffle=True)
 
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-model = Net().to(device)
+#model = Net()
+model = torch.load('model.pt')
+model = model.to(device)
 
 optimizer = torch.optim.Adam(model.parameters(), lr=0.01, weight_decay=5e-4)
 
 model.train()
-for epoch in range(50):
+for epoch in range(200):
     print("epoch {}".format(epoch))
     
-    for data in loader:
+    for data in progressbar.progressbar(loader):
         data = data.to(device)
         
         optimizer.zero_grad()
@@ -36,6 +37,7 @@ for epoch in range(50):
         optimizer.step()
         
         
+    torch.save(model, 'model2.pt')
     
     
 model.eval()

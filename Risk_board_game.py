@@ -582,9 +582,11 @@ def get_move_list(r):
         # this is the only stage with stochastic outcomes
         else:
             # option to stop attacking
-            R = copy.deepcopy(r)
-            R.end_attack_stage()
-            results.append([(R, 1.0)])
+            # artificially increase prob of randomly choosing to stop attacking
+            for i in range(5): 
+                R = copy.deepcopy(r)
+                R.end_attack_stage()
+                results.append([(R, 1.0)])
             
             moves = r.get_attack_moves()
 

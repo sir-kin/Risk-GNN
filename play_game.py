@@ -1,10 +1,15 @@
 import numpy as np
 from matplotlib import pyplot as plt
+import pickle
 
 from Risk_board_game import Risk, get_move_list, one_hot_encoding
 
+from torch_geometric.data import Data
+import torch
 
-def step(r, player, prob_random_move = 0.33, model=None, animate=True):
+
+
+def step(r, player, prob_random_move = 0.05, model=None, animate=True):
     
     if model is None and prob_random_move != 1.0:
         raise ValueError("Without a model, can only make 100% random moves.")
@@ -53,8 +58,6 @@ def step(r, player, prob_random_move = 0.33, model=None, animate=True):
     return r, player
     
 
-from torch_geometric.data import Data
-import torch
 
 edge_list = list(Risk().map.edges())
 # include both directions of edges
@@ -69,9 +72,6 @@ def encode(r):
     
     return Data(x=x, edge_index=edge_index)
 
-
-#device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-#model = Net().to(device)
 
 def get_winning_chances(r, model):
     d = encode(r)
@@ -104,11 +104,11 @@ def play_game(_=None, model=None):
     
     board_list = []
     player_turn_list = []
-    while r.check_winner(percentage=0.8) is None:
+    while r.check_winner(percentage=0.75) is None:
         board_list.append(encode(r))
         player_turn_list.append(player)
         
-        r, player = step(r, player, model=model)
+        r, player = step(r, player, model=model, animate=True)
         
 
     
@@ -128,16 +128,21 @@ def play_game(_=None, model=None):
     return board_list
 
 
+model = torch.load('model2.pt')
 model_cpu = model.to(torch.device('cpu'))
 
-
+"""
 results = []
-for i in range(5):
+for i in range(1):
     t = play_game(model=model_cpu)
     results.append(t)
+"""
 
+t = play_game(model=model_cpu)
 
-
+game_idx = np.random.randint(100000)
+with open("saved_games2/game_{}".format(game_idx), "wb") as f:
+    pickle.dump(t, f)
 
 
 

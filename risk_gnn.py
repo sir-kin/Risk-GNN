@@ -19,10 +19,8 @@ class Net(torch.nn.Module):
     def __init__(self):
         super().__init__()
         
-        #self.mlp1 = Seq(Lin(num_node_features + num_global_features, 32), ReLU() )
-        #self.mlp1 = Seq( MLP([num_node_features + num_global_features, 32]), MLP([32, 64]), MLP([64, 32]))
-        #self.mlp2 = Seq( MLP([32, 32]), MLP([32, 64]), MLP([64, 32]))
-        #self.mlpout = Seq( MLP([32, 64]), MLP([64, 32]), Lin(32, num_players))
+        self.mlp1 = Seq(Lin(32, 32), ReLU() )
+        self.mlp2 = Seq(Lin(32, 32), ReLU() )
         
         self.conv1 = GCNConv(num_node_features + num_global_features, 32)
         self.conv2 = GCNConv(32, 32)
@@ -47,11 +45,11 @@ class Net(torch.nn.Module):
 
         x = self.conv1(x, edge_index)
         x = F.relu(x)
+        x = self.mlp1(x)
         
         x = self.conv2(x, edge_index)
         x = F.relu(x)
-        
-        #x = self.mlp2(x)
+        x = self.mlp2(x)
         
         x = self.conv3(x, edge_index)
         
